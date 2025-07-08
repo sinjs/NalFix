@@ -29,7 +29,6 @@ namespace NalFix
                 if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
                     Log.Error("No administrator permissions");
-                    Console.ReadLine();
                     return;
                 }
             }
@@ -39,7 +38,6 @@ namespace NalFix
             if (!IsNalInUse())
             {
                 Log.Critical("Device/Nal is not in use!");
-                Console.ReadLine();
                 return;
             }
 
@@ -64,14 +62,13 @@ namespace NalFix
                     Thread.Sleep(200);
                     if (IsNalInUse())
                     {
-                        var forceful = Log.QueryYesNo("Device/Nal is still in use, do you want to try to forcefully remove the service? (y/n): ");
+                        var forceful = args.Contains("--yes") || Log.QueryYesNo("Device/Nal is still in use, do you want to try to forcefully remove the service? (y/n): ");
                         if (forceful)
                         {
                             var success = StopAndRemoveForcefully(driver.Key);
                             if(!success)
                             {
                                 Log.Error("Couldn't delete service forcefully.");
-                                Console.ReadLine();
                                 return;
                             }
                         }
@@ -91,8 +88,6 @@ namespace NalFix
             {
                 Log.Error("Driver wasn't found.");
             }
-
-            Console.ReadLine();
         }
 
         static Dictionary<string, string> GetDriverPaths()
